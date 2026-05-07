@@ -1,14 +1,32 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# ggchemplot
+# ggchemplot: an R package for visualization of chemical structures
 
 <!-- badges: start -->
 
 <!-- badges: end -->
 
-The goal of ggchemplot is to prepare publication-quality visualizations
-of chemical compounds using ggplot2.
+<table>
+
+<tr>
+
+<td width="65%">
+
+`ggchemplot` is an extension of `ggplot2` designed for preparing
+publication-quality visualizations of chemical compounds.
+
+</td>
+
+<td width="35%" align="center">
+
+<img src="man/figures/ggchemplot_logo.png" width="180"/>
+
+</td>
+
+</tr>
+
+</table>
 
 ## Installation
 
@@ -35,11 +53,12 @@ library(ggchemplot)
 # Parse SDF file and generate the initial data object
 p1 <- ggchemplot1(sdf_file = "inst/extdata/P1.sdf")
 
-# Quick plot
-p1$plot
+# Save plot
+ggplot2::ggsave(filename = "man/figures/ggchemplot_logo.pngexample-1.png", dpi = 300)
 ```
 
-<img src="man/figures/ggchemplot_logo.pngexample-1.png" width="100%" />
+<img src="man/figures/ggchemplot_logo.pngexample-1.png"
+style="width:50.0%" />
 
 ``` r
 
@@ -62,7 +81,9 @@ p1 <- ggchemplot1(sdf_file = "inst/extdata/P1.sdf",
                   paint_it_black = TRUE,
                   H_offset = c(0.9, 1)
 )
-p1$plot
+
+# Save plot
+ggplot2::ggsave(filename = "man/figures/ggchemplot_logo.pngexample-2.png", dpi = 300)
 ```
 
-<img src="man/figures/ggchemplot_logo.pngexample-2.png" width="100%" />
+<img src="man/figures/README-example-2.png" style="width:50.0%" />
