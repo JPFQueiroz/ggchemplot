@@ -1,2 +1,68 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # ggchemplot
-ggchemplot is an R package for visualization of chemical structures using ggplot2.
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+The goal of ggchemplot is to prepare publication-quality visualizations
+of chemical compounds using ggplot2.
+
+## Installation
+
+You can install the development version of ggchemplot from
+[GitHub](https://github.com/) with:
+
+``` r
+# Install the remotes package if not already installed
+install.packages("remotes")
+
+# Install evobioqR from GitHub
+remotes::install_github("JPFQueiroz/ggchemplot")
+```
+
+## Example
+
+This is a basic example which shows you how to solve a common problem:
+
+``` r
+
+# Load ggchemplot
+library(ggchemplot)
+
+# Parse SDF file and generate the initial data object
+p1 <- ggchemplot1(sdf_file = "inst/extdata/P1.sdf")
+
+# Quick plot
+p1$plot
+```
+
+<img src="man/figures/ggchemplot_logo.pngexample-1.png" width="100%" />
+
+``` r
+
+# Customize plot
+p1 <- ggchemplot1(sdf_file = "inst/extdata/P1.sdf",
+                  title = NULL,
+                  collapse_hydrogens = TRUE,
+                  rotation = 90,
+                  label_padding = 1,
+                  show_atom_circles = TRUE,
+                  hide_carbon_circles = TRUE,
+                  circle_stroke = 0,
+                  show_atom_labels = TRUE,
+                  hide_carbon_labels = TRUE,
+                  bond_width = 2,
+                  atom_size = 26, 
+                  label_size = 18,
+                  double_bond_offset = 0.3,
+                  custom_atom_colors = NULL,
+                  paint_it_black = TRUE,
+                  H_offset = c(0.9, 1)
+)
+p1$plot
+```
+
+<img src="man/figures/ggchemplot_logo.pngexample-2.png" width="100%" />

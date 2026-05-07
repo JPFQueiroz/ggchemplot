@@ -3,7 +3,7 @@ Title: an R package for visualization of chemical structures
 Version: 0.1.0
 Authors@R: 
     person("João Pedro", "Fernandes Queiroz", , "queiroz_pedro22@outlook.com", role = c("aut", "cre"))
-Description: This package uses small compound files in SDF format to prepare publication-quality visualizations using ggplot2.
+Description: This package uses small compound files in SDF format to prepare publication-quality visualizations through ggplot2.
 License: GPL-3 | file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

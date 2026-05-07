@@ -124,7 +124,7 @@ ggchemplot1 <- function(sdf_file,
                                .data$color),
               by = c("from" = "atom_id")) %>%
     rename(x1 = .data$x, y1 = .data$y, sym1 = .data$symbol,
-           col1 = .data$olor) %>%
+           col1 = .data$color) %>%
     left_join(atoms %>% select(.data$atom_id, .data$x, .data$y, .data$symbol),
               by = c("to" = "atom_id")) %>%
     rename(x2 = .data$x, y2 = .data$y, sym2 = .data$symbol)
