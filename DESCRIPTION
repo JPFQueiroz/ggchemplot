@@ -1,0 +1,17 @@
+Package: ggchemplot
+Title: an R package for visualization of chemical structures 
+Version: 0.1.0
+Authors@R: 
+    person("João Pedro", "Fernandes Queiroz", , "queiroz_pedro22@outlook.com", role = c("aut", "cre"))
+Description: This package uses small compound files in SDF format to prepare publication-quality visualizations using ggplot2.
+License: GPL-3 | file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Imports: 
+    ggplot2,
+    dplyr,
+    grid
+Suggests: 
+    rcdk,
+    ChemmineR
