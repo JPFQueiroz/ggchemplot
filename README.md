@@ -7,20 +7,20 @@
 
 <!-- badges: end -->
 
-<table>
+<table style="border: none;">
 
-<tr>
+<tr style="border: none;">
 
-<td width="65%">
+<td width="65%" style="border: none; vertical-align: middle;">
 
 `ggchemplot` is an extension of `ggplot2` designed for preparing
 publication-quality visualizations of chemical compounds.
 
 </td>
 
-<td width="35%" align="center">
+<td width="35%" align="center" style="border: none;">
 
-<img src="man/figures/ggchemplot_logo.png" width="180"/>
+<img src="man/figures/ggchemplot_logo.png" width="300"/>
 
 </td>
 
@@ -30,7 +30,7 @@ publication-quality visualizations of chemical compounds.
 
 ## Installation
 
-You can install the development version of ggchemplot from
+You can install the development version of `ggchemplot` from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -43,7 +43,8 @@ remotes::install_github("JPFQueiroz/ggchemplot")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+The quick example below shows how to parse a SDF file and save a default
+visualization.
 
 ``` r
 
@@ -54,11 +55,14 @@ library(ggchemplot)
 p1 <- ggchemplot1(sdf_file = "inst/extdata/P1.sdf")
 
 # Save plot
-ggplot2::ggsave(filename = "man/figures/ggchemplot_logo.pngexample-1.png", dpi = 300)
+ggplot2::ggsave(filename = "man/figures/ggchemplot_example1.png", 
+                bg = "white",
+                dpi = 300)
 ```
 
-<img src="man/figures/ggchemplot_logo.pngexample-1.png"
-style="width:50.0%" />
+<img src="man/figures/ggchemplot_example1.png" style="width:50.0%" />
+
+The `ggchemplot1` function also allows some customization.
 
 ``` r
 
@@ -79,11 +83,98 @@ p1 <- ggchemplot1(sdf_file = "inst/extdata/P1.sdf",
                   double_bond_offset = 0.3,
                   custom_atom_colors = NULL,
                   paint_it_black = TRUE,
-                  H_offset = c(0.9, 1)
+                  H_offset = c(0.85, 1)
 )
 
 # Save plot
-ggplot2::ggsave(filename = "man/figures/ggchemplot_logo.pngexample-2.png", dpi = 300)
+ggplot2::ggsave(filename = "man/figures/ggchemplot_example2.png", 
+                bg = "white",
+                dpi = 300)
 ```
 
-<img src="man/figures/README-example-2.png" style="width:50.0%" />
+<img src="man/figures/ggchemplot_example2.png" style="width:50.0%" />
+
+Helper functions use the output returned by `ggchemplot1` to modify the
+data, which allows the user to polish the visualization before the final
+plot with `ggchemplot2`.
+
+``` r
+
+library(ggchemplot)
+library(dplyr)
+
+# Parse the data and create initial plot
+p1 <- ggchemplot1(sdf_file = "inst/extdata/P1.sdf",
+                  title = NULL,
+                  collapse_hydrogens = TRUE,
+                  rotation = 90,
+                  label_padding = 1,
+                  show_atom_circles = TRUE,
+                  hide_carbon_circles = TRUE,
+                  circle_stroke = 0,
+                  show_atom_labels = TRUE,
+                  hide_carbon_labels = TRUE,
+                  bond_width = 2,
+                  atom_size = 26, 
+                  label_size = 18,
+                  double_bond_offset = 0.3,
+                  custom_atom_colors = NULL,
+                  paint_it_black = TRUE,
+                  H_offset = c(0.9, 1)
+)
+
+# Visualizing atom and bond ids helps with the customization
+p1 %>% ggchemplot2(show_ids = TRUE,
+                  H_offset = c(0.85, 1))
+
+
+# Example of modification: Change atom label
+p1 %>% 
+  change_label(atom_id = 4, new_label = "X") %>% 
+  ggchemplot2(label_padding = 1,
+              H_offset = c(0.95, 1))
+
+# Save plot
+ggplot2::ggsave(filename = "man/figures/ggchemplot_example3.png", 
+                bg = "white",
+                dpi = 300)
+```
+
+<img src="man/figures/ggchemplot_example3.png" style="width:50.0%" />
+
+The example below shows how an iron atom can be added below the
+pyridinol nitrogen, then connected through a hashed bond.
+
+``` r
+
+library(ggchemplot)
+library(dplyr)
+library(ggplot2)
+library(grid)
+
+p1 <- ggchemplot1(sdf_file = "inst/extdata/GP_pyridinol_acyl.sdf", 
+                  collapse_hydrogens = TRUE,
+                  rotation = 0,
+                  atom_size = 16, 
+                  label_size = 10,
+                  label_padding = 1,
+                  paint_it_black = TRUE,
+                  double_bond_offset = 0.24,
+                  bond_width = 1.25
+                  )
+
+p1 %>%
+  change_label(atom_id = 14, new_label = "GMP") %>%
+  add_atom(x = p1$atoms$x[3], y = p1$atoms$y[3] - 3.25, symbol = "Fe") %>% 
+  add_hashed_bond(from_id = 15, to_id = 3, width = 0.28, 
+                  shorten = c(0.5, 0.5), colour = "black", 
+                  wedge_thickness = .25, n_hashes = 8) %>% 
+  ggchemplot2(H_offset = c(0.9, 1))
+
+# Save plot
+ggplot2::ggsave(filename = "man/figures/ggchemplot_example4.png", 
+                bg = "white",
+                dpi = 300)
+```
+
+<img src="man/figures/ggchemplot_example4.png" style="width:50.0%" />

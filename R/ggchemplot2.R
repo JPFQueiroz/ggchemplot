@@ -24,6 +24,9 @@
 #' @param H_offset Numeric vector of length 2. Controls the distance of collapsed
 #'        hydrogen labels (first value for single H, second for H2/H3).
 #'        Only used when \code{collapse_hydrogens = TRUE}.
+#' @param label_fontface String. Font face for atom labels.
+#'   Possible values are `"plain"` (default), `"bold"`, `"italic"`, or `"bold.italic"`.
+#'   Controls the appearance of all atom labels (including collapsed hydrogens).
 #'
 #' @return A ggplot object.
 #'
@@ -45,7 +48,8 @@ ggchemplot2 <- function(result,
                         double_bond_offset = NULL,
                         paint_it_black = NULL,
                         show_ids = FALSE,
-                        H_offset = FALSE) {
+                        H_offset = NULL,
+                        label_fontface = NULL) {
 
   # Use stored parameters as defaults
   pms <- result$params
@@ -61,9 +65,9 @@ ggchemplot2 <- function(result,
   atom_size           <- if (!is.null(atom_size)) atom_size else pms$atom_size %||% 4.25
   label_size          <- if (!is.null(label_size)) label_size else pms$label_size %||% 3.1
   double_bond_offset  <- if (!is.null(double_bond_offset)) double_bond_offset else pms$double_bond_offset %||% 0.105
-  paint_it_black  <- if (!is.null(paint_it_black)) double_bond_offset else pms$paint_it_black %||% "black"
-  H_offset  <- if (!is.null(H_offset))
-    H_offset else pms$H_offset %||% c(0.45, 0.55)
+  paint_it_black      <- if (!is.null(paint_it_black)) paint_it_black else pms$paint_it_black %||% FALSE
+  H_offset            <- if (!is.null(H_offset)) H_offset else pms$H_offset %||% c(0.45, 0.55)
+  label_fontface      <- if (!is.null(label_fontface)) label_fontface else pms$label_fontface %||% "plain"
 
   atoms <- result$atoms
   bond_coords <- result$bond_coords
@@ -90,13 +94,19 @@ ggchemplot2 <- function(result,
     # Special bonds (Wedge + Hashed)
     special_bonds <- bond_coords %>% filter(!is.na(.data$bond_type))
     if (nrow(special_bonds) > 0) {
-      p <- p + geom_wedge(data = special_bonds,
-                          aes(x1 = .data$x1, y1 = .data$y1,
-                              x2 = .data$x2, y2 = .data$y2,
-                              wedgetype = .data$bond_type,
-                              shorten = .data$shorten),
-                          width = 0.26,
-                          wedge_thickness = 0.12)
+      p <- p + geom_wedge(
+        data = special_bonds,
+        aes(x1 = .data$x1, y1 = .data$y1,
+            x2 = .data$x2, y2 = .data$y2,
+            wedgetype = .data$bond_type),
+        width = special_bonds$width %||% 0.26,
+        wedge_thickness = special_bonds$wedge_thickness %||% 0.12,
+        shorten_start = special_bonds$shorten_start %||% 0.15,
+        shorten_end = special_bonds$shorten_end %||% 0.22,
+        n_hashes = special_bonds$n_hashes %||% 8,
+        colour = special_bonds$colour %||% "black",
+        fill = special_bonds$colour %||% "black"
+      )
     }
 
     # PROTEIN LINKS (Wavy lines)
@@ -116,7 +126,7 @@ ggchemplot2 <- function(result,
       p <- p + geom_text(data = labels_df,
                          aes(x = .data$x, y = .data$y, label = .data$label),
                          size = 4.2,
-                         fontface = "bold",
+                         fontface = label_fontface,
                          color = "black")
     }
 
@@ -191,7 +201,7 @@ ggchemplot2 <- function(result,
                        aes(x = .data$x, y = .data$y,
                            label = .data$symbol),
                        size = label_size,
-                       fontface = "bold",
+                       fontface = label_fontface,
                        color = atoms_label$color)
 
     # H labels with different offsets for H vs H2/H3
@@ -237,7 +247,7 @@ ggchemplot2 <- function(result,
                              label = .data$h_text),
                          parse = TRUE,
                          size = label_size,
-                         fontface = "bold",
+                         fontface = label_fontface,
                          color = "black")
     }
   }

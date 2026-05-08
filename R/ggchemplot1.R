@@ -29,6 +29,9 @@
 #' @param H_offset Numeric vector of length 2. Controls the distance of collapsed
 #'        hydrogen labels (first value for single H, second for H2/H3).
 #'        Only used when \code{collapse_hydrogens = TRUE}.
+#' @param label_fontface String. Font face for atom labels.
+#'   Possible values are `"plain"` (default), `"bold"`, `"italic"`, or `"bold.italic"`.
+#'   Controls the appearance of all atom labels (including collapsed hydrogens).
 #'
 #' @return A list containing the processed data and a ggplot object (\code{$plot}).
 #'
@@ -52,7 +55,8 @@ ggchemplot1 <- function(sdf_file,
                         double_bond_offset = 0.15,
                         custom_atom_colors = NULL,
                         paint_it_black = FALSE,
-                        H_offset = c(0.35, 0.55)) {
+                        H_offset = c(0.35, 0.55),
+                        label_fontface = "plain") {
 
   # Read SDF
   lines <-
@@ -150,7 +154,8 @@ ggchemplot1 <- function(sdf_file,
                    label_size = label_size,
                    double_bond_offset = double_bond_offset,
                    paint_it_black = paint_it_black,
-                   H_offset = H_offset)
+                   H_offset = H_offset,
+                   label_fontface = label_fontface)
 
   # Save parameters for easy tweaking with ggchemplot2
   result$params <- list(
@@ -169,7 +174,8 @@ ggchemplot1 <- function(sdf_file,
     double_bond_offset = double_bond_offset,
     custom_atom_colors = custom_atom_colors,
     paint_it_black = paint_it_black,
-    H_offset = H_offset
+    H_offset = H_offset,
+    label_fontface = label_fontface
   )
 
   result$plot <- p

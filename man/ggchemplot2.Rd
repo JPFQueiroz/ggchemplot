@@ -19,7 +19,8 @@ ggchemplot2(
   double_bond_offset = NULL,
   paint_it_black = NULL,
   show_ids = FALSE,
-  H_offset = FALSE
+  H_offset = NULL,
+  label_fontface = NULL
 )
 }
 \arguments{
@@ -56,6 +57,10 @@ Default is 0.6.}
 \item{H_offset}{Numeric vector of length 2. Controls the distance of collapsed
 hydrogen labels (first value for single H, second for H2/H3).
 Only used when \code{collapse_hydrogens = TRUE}.}
+
+\item{label_fontface}{String. Font face for atom labels.
+Possible values are \code{"plain"} (default), \code{"bold"}, \code{"italic"}, or \code{"bold.italic"}.
+Controls the appearance of all atom labels (including collapsed hydrogens).}
 }
 \value{
 A ggplot object.

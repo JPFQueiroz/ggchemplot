@@ -2,7 +2,7 @@
 % Please edit documentation in R/add_protein_link.R
 \name{add_protein_link}
 \alias{add_protein_link}
-\title{Add a new atom.}
+\title{AAdd wavy/squiggly line representing protein attachment.}
 \usage{
 add_protein_link(
   result,
@@ -42,5 +42,5 @@ add_protein_link(
 A list as in \code{ggchemplot1}.
 }
 \description{
-Helper function to add new atoms to user-defined locations.
+Helper function to add wavy lines representing protein attachments to user-defined locations.
 }

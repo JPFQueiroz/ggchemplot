@@ -36,7 +36,7 @@ add_atom <- function(result, x, y, symbol = "C", atom_id = NULL, color = NULL) {
     symbol == "N" ~ "#1f78b4",
     symbol == "P" ~ "violet",
     symbol == "S" ~ "#e6ab02",
-    symbol == "Fe" ~ "orange",
+    symbol == "H" ~ "grey40",
     TRUE ~ "black"
   )
 
