@@ -24,13 +24,15 @@ add_bond <- function(result, from_id, to_id, order = 1) {
   # Add the raw bond
   result$bond_coords <- bind_rows(result$bond_coords, new_bond)
 
-  # Rebuild full bond_coords with coordinates
+  # Rebuild full bond_coords with coordinates while preserving special columns
   atoms_temp <- result$atoms %>%
     select(.data$atom_id, .data$x, .data$y, .data$symbol)
 
   result$bond_coords <- result$bond_coords %>%
-    # Keep only the original columns to avoid duplicates
-    select(.data$from, .data$to, .data$order) %>%
+    # Preserve all special columns
+    select(.data$from, .data$to, .data$order,
+           any_of(c("bond_type", "shorten_start", "shorten_end",
+                    "width", "wedge_thickness", "n_hashes", "colour"))) %>%
     left_join(atoms_temp, by = c("from" = "atom_id")) %>%
     rename(x1 = .data$x, y1 = .data$y, sym1 = .data$symbol) %>%
     left_join(atoms_temp, by = c("to" = "atom_id")) %>%

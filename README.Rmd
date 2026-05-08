@@ -173,6 +173,7 @@ p1 %>%
   add_hashed_bond(from_id = 15, to_id = 3, width = 0.28, 
                   shorten = c(0.5, 0.5), colour = "black", 
                   wedge_thickness = .25, n_hashes = 8) %>% 
+  add_bond(from_id = 15, to_id = 10, order = 1) %>% 
   ggchemplot2(H_offset = c(0.9, 1))
 
 # Save plot
