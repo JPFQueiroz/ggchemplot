@@ -26,6 +26,8 @@
 #' @param custom_atom_colors Named character vector. Custom colors for specific atoms
 #'        (e.g. \code{c("N" = "black", "O" = "red")}).
 #' @param paint_it_black Logical. If \code{TRUE}, overrides colors to make all atoms black.
+#' @param bond_color String. Specify the color of bonds. Default to black.
+#' @param atom_circle_color String. Specify the color of the atom circle. Default to white.
 #' @param H_offset Numeric vector of length 2. Controls the distance of collapsed
 #'        hydrogen labels (first value for single H, second for H2/H3).
 #'        Only used when \code{collapse_hydrogens = TRUE}.
@@ -55,6 +57,8 @@ ggchemplot1 <- function(sdf_file,
                         double_bond_offset = 0.15,
                         custom_atom_colors = NULL,
                         paint_it_black = FALSE,
+                        bond_color = "black",
+                        atom_circle_color = "white",
                         H_offset = c(0.35, 0.55),
                         label_fontface = "plain") {
 
@@ -154,6 +158,8 @@ ggchemplot1 <- function(sdf_file,
                    label_size = label_size,
                    double_bond_offset = double_bond_offset,
                    paint_it_black = paint_it_black,
+                   bond_color = bond_color,
+                   atom_circle_color = atom_circle_color,
                    H_offset = H_offset,
                    label_fontface = label_fontface)
 

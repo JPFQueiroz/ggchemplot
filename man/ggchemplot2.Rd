@@ -18,6 +18,8 @@ ggchemplot2(
   label_size = NULL,
   double_bond_offset = NULL,
   paint_it_black = NULL,
+  bond_color = "black",
+  atom_circle_color = "white",
   show_ids = FALSE,
   H_offset = NULL,
   label_fontface = NULL
@@ -51,6 +53,10 @@ Default is 0.6.}
 \item{double_bond_offset}{Numeric. Offset distance for drawing double and triple bonds.}
 
 \item{paint_it_black}{Logical. If \code{TRUE}, overrides colors to make all atoms black.}
+
+\item{bond_color}{String. Specify the color of bonds. Default to black.}
+
+\item{atom_circle_color}{String. Specify the color of the atom circle. Default to white.}
 
 \item{show_ids}{Logical. Whether to show atom and bond ids. Helps when polishing the visualization.}
 

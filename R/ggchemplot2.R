@@ -20,6 +20,8 @@
 #' @param label_size Numeric. Size of the atom labels.
 #' @param double_bond_offset Numeric. Offset distance for drawing double and triple bonds.
 #' @param paint_it_black Logical. If \code{TRUE}, overrides colors to make all atoms black.
+#' @param bond_color String. Specify the color of bonds. Default to black.
+#' @param atom_circle_color String. Specify the color of the atom circle. Default to white.
 #' @param show_ids Logical. Whether to show atom and bond ids. Helps when polishing the visualization.
 #' @param H_offset Numeric vector of length 2. Controls the distance of collapsed
 #'        hydrogen labels (first value for single H, second for H2/H3).
@@ -47,6 +49,8 @@ ggchemplot2 <- function(result,
                         label_size = NULL,
                         double_bond_offset = NULL,
                         paint_it_black = NULL,
+                        bond_color = "black",
+                        atom_circle_color = "white",
                         show_ids = FALSE,
                         H_offset = NULL,
                         label_fontface = NULL) {
@@ -66,6 +70,8 @@ ggchemplot2 <- function(result,
   label_size          <- if (!is.null(label_size)) label_size else pms$label_size %||% 3.1
   double_bond_offset  <- if (!is.null(double_bond_offset)) double_bond_offset else pms$double_bond_offset %||% 0.105
   paint_it_black      <- if (!is.null(paint_it_black)) paint_it_black else pms$paint_it_black %||% FALSE
+  bond_color          <- if (!is.null(bond_color)) bond_color else pms$bond_color %||% "black"
+  atom_circle_color   <- if (!is.null(atom_circle_color)) atom_circle_color else pms$atom_circle_color %||% "white"
   H_offset            <- if (!is.null(H_offset)) H_offset else pms$H_offset %||% c(0.45, 0.55)
   label_fontface      <- if (!is.null(label_fontface)) label_fontface else pms$label_fontface %||% "plain"
 
@@ -88,7 +94,7 @@ ggchemplot2 <- function(result,
       p <- p + geom_segment(data = normal_bonds,
                             aes(x = .data$x1, y = .data$y1,
                                 xend = .data$x2, yend = .data$y2),
-                            linewidth = bond_width, color = "black")
+                            linewidth = bond_width, color = bond_color)
     }
 
     # Special bonds (Wedge + Hashed)
@@ -104,8 +110,8 @@ ggchemplot2 <- function(result,
         shorten_start = special_bonds$shorten_start %||% 0.15,
         shorten_end = special_bonds$shorten_end %||% 0.22,
         n_hashes = special_bonds$n_hashes %||% 8,
-        colour = special_bonds$colour %||% "black",
-        fill = special_bonds$colour %||% "black"
+        colour = special_bonds$colour %||% bond_color,
+        fill = special_bonds$colour %||% bond_color
       )
     }
 
@@ -116,7 +122,7 @@ ggchemplot2 <- function(result,
         p <- p + geom_path(data = link$data,
                            aes(x = .data$x, y = .data$y),
                            linewidth = link$linewidth %||% 1.3,
-                           color = "black")
+                           color = bond_color)
       }
     }
 
@@ -163,7 +169,7 @@ ggchemplot2 <- function(result,
                               y = .data$y1 + .data$off_y,
                               xend = .data$x2 + .data$off_x,
                               yend = .data$y2 + .data$off_y),
-                          linewidth = bond_width * 0.78, color = "black")
+                          linewidth = bond_width * 0.78, color = bond_color)
 
     triples <- multi_bonds %>% filter(order >= 3)
     if (nrow(triples) > 0) {
@@ -172,7 +178,7 @@ ggchemplot2 <- function(result,
                                 y = .data$y1 - .data$off_y,
                                 xend = .data$x2 - .data$off_x,
                                 yend = .data$y2 - .data$off_y),
-                            linewidth = bond_width * 0.78, color = "black")
+                            linewidth = bond_width * 0.78, color = bond_color)
     }
   }
 
@@ -183,7 +189,7 @@ ggchemplot2 <- function(result,
     p <- p + geom_point(data = atoms_circle,
                         aes(x = .data$x, y = .data$y),
                         color = atoms_circle$color,
-                        fill = "white",
+                        fill = atom_circle_color,
                         size = atom_size,
                         shape = 21,
                         stroke = circle_stroke)

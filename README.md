@@ -37,7 +37,7 @@ You can install the development version of `ggchemplot` from
 # Install the remotes package if not already installed
 install.packages("remotes")
 
-# Install evobioqR from GitHub
+# Install ggchemplot from GitHub
 remotes::install_github("JPFQueiroz/ggchemplot")
 ```
 
@@ -51,8 +51,11 @@ visualization.
 # Load ggchemplot
 library(ggchemplot)
 
+# Path to the example file
+file_path <- system.file("extdata", "P1.sdf", package = "ggchemplot")
+
 # Parse SDF file and generate the initial data object
-p1 <- ggchemplot1(sdf_file = "inst/extdata/P1.sdf")
+p1 <- ggchemplot1(sdf_file = file_path)
 
 # Save plot
 ggplot2::ggsave(filename = "man/figures/ggchemplot_example1.png", 
@@ -67,7 +70,7 @@ The `ggchemplot1` function also allows some customization.
 ``` r
 
 # Customize plot
-p1 <- ggchemplot1(sdf_file = "inst/extdata/P1.sdf",
+p1 <- ggchemplot1(sdf_file = file_path,
                   title = NULL,
                   collapse_hydrogens = TRUE,
                   rotation = 90,
@@ -104,7 +107,7 @@ library(ggchemplot)
 library(dplyr)
 
 # Parse the data and create initial plot
-p1 <- ggchemplot1(sdf_file = "inst/extdata/P1.sdf",
+p1 <- ggchemplot1(sdf_file = file_path,
                   title = NULL,
                   collapse_hydrogens = TRUE,
                   rotation = 90,
@@ -152,7 +155,10 @@ library(dplyr)
 library(ggplot2)
 library(grid)
 
-p1 <- ggchemplot1(sdf_file = "inst/extdata/GP_pyridinol_acyl.sdf", 
+# New file path
+file_path <- system.file("extdata", "GP_pyridinol_acyl.sdf", package = "ggchemplot")
+
+p1 <- ggchemplot1(sdf_file = file_path, 
                   collapse_hydrogens = TRUE,
                   rotation = 0,
                   atom_size = 16, 

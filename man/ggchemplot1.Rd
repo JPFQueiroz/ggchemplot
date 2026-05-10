@@ -21,6 +21,8 @@ ggchemplot1(
   double_bond_offset = 0.15,
   custom_atom_colors = NULL,
   paint_it_black = FALSE,
+  bond_color = "black",
+  atom_circle_color = "white",
   H_offset = c(0.35, 0.55),
   label_fontface = "plain"
 )
@@ -63,6 +65,10 @@ Default is 0.6.}
 (e.g. \code{c("N" = "black", "O" = "red")}).}
 
 \item{paint_it_black}{Logical. If \code{TRUE}, overrides colors to make all atoms black.}
+
+\item{bond_color}{String. Specify the color of bonds. Default to black.}
+
+\item{atom_circle_color}{String. Specify the color of the atom circle. Default to white.}
 
 \item{H_offset}{Numeric vector of length 2. Controls the distance of collapsed
 hydrogen labels (first value for single H, second for H2/H3).
