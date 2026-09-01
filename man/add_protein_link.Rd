@@ -36,7 +36,7 @@ add_protein_link(
 
 \item{linewidth}{Numeric. Width of the wave line. Default to 1.35.}
 
-\item{label}{String. Optional. Add a label to the wave. Useful for protein names. Default to NULL.}
+\item{label}{Character. Optional. Add a label to the wave. Useful for protein names. Default to NULL.}
 }
 \value{
 A list as in \code{ggchemplot1}.

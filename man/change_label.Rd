@@ -11,7 +11,7 @@ change_label(result, atom_id, new_label)
 
 \item{atom_id}{Numeric. Specifies the \code{atom_id} number.}
 
-\item{new_label}{String. The new label for the atom.}
+\item{new_label}{Character. The new label for the atom.}
 }
 \value{
 A list as in \code{ggchemplot1}.

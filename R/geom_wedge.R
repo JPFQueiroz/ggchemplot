@@ -48,20 +48,27 @@ GeomWedge <-
                          polygonGrob(coords$x, coords$y,
                                      gp = gpar(fill = row$fill, col = NA, alpha = row$alpha))
                        } else {
-                         # Hashed
-                         n <- row$n_hashes
-                         t_vals <- seq(0.05, 0.95, length.out = n)
+                         # Hashed wedge — American / IUPAC style
+                         n <- max(3L, as.integer(row$n_hashes))
+                         t_vals <- seq(0.12, 0.96, length.out = n)
+
+                         # constant bar thickness in data units
+                         thickness <- max(0.02, as.numeric(row$wedge_thickness))
+
                          polys <- lapply(t_vals, function(t) {
                            xt <- x1s + (x2s - x1s) * t
                            yt <- y1s + (y2s - y1s) * t
-                           wt <- w * t * 0.9
-                           thickness <- w * (row$wedge_thickness * (0.3 + 0.7 * t))
+
+                           # half-length of this hash (grows toward the far end)
+                           wt <- w * t
+
                            wx <- px * wt; wy <- py * wt
-                           tx <- dx * thickness; ty <- dy * thickness
+                           tx <- dx * thickness * 0.5
+                           ty <- dy * thickness * 0.5
 
                            df <- data.frame(
-                             x = c(xt + wx, xt - wx, xt - wx - tx, xt + wx - tx),
-                             y = c(yt + wy, yt - wy, yt - wy - ty, yt + wy - ty)
+                             x = c(xt + wx - tx, xt - wx - tx, xt - wx + tx, xt + wx + tx),
+                             y = c(yt + wy - ty, yt - wy - ty, yt - wy + ty, yt + wy + ty)
                            )
                            coords <- coord$transform(df, panel_params)
                            polygonGrob(coords$x, coords$y,

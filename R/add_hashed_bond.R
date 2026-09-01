@@ -7,7 +7,7 @@
 #' @param from_id Numeric. Specifies the \code{atom_id} number of the first atom.
 #' @param to_id Numeric. Specifies the \code{atom_id} number of the second atom.
 #' @param shorten Numeric vector of length 2. Shortens the start and end of the bond to avoid superposition with the atom layer. Default to c(0.15, 0.22).
-#' @param colour String. Specifies the bond color. Default to "black".
+#' @param colour Character. Specifies the bond color. Default to "black".
 #' @param width Numeric. Specifies the bond width. Default to 0.28.
 #' @param wedge_thickness Numeric. Specifies the thickness of individual hashes. Default to 0.10.
 #' @param n_hashes Numeric. Specifies the number of hashes. Default to 8.

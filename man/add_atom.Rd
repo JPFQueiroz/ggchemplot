@@ -13,11 +13,11 @@ add_atom(result, x, y, symbol = "C", atom_id = NULL, color = NULL)
 
 \item{y}{Numeric. Location of the atom in the y-axis.}
 
-\item{symbol}{String. Label for the the atom.}
+\item{symbol}{Character. Label for the the atom.}
 
 \item{atom_id}{Numeric. (Optional). Specifies the \code{atom_id} number. Default to NULL: \code{atom_id} automatically generated.}
 
-\item{color}{String. Color for the the atom.}
+\item{color}{Character. Color for the the atom.}
 }
 \value{
 A list as in \code{ggchemplot1}.

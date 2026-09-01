@@ -6,82 +6,127 @@
 \usage{
 ggchemplot1(
   sdf_file,
+  use_sdf_stereo = TRUE,
   title = NULL,
   collapse_hydrogens = FALSE,
   rotation = 0,
-  label_padding = 0.6,
+  flip_horizontal = FALSE,
+  flip_vertical = FALSE,
+  label_padding = NULL,
   show_atom_circles = TRUE,
   hide_carbon_circles = TRUE,
   circle_stroke = 0,
   show_atom_labels = TRUE,
   hide_carbon_labels = TRUE,
-  bond_width = 2,
-  atom_size = 20,
-  label_size = 14,
-  double_bond_offset = 0.15,
+  bond_width = NULL,
+  atom_size = NULL,
+  label_size = NULL,
+  double_bond_offset = NULL,
   custom_atom_colors = NULL,
   paint_it_black = FALSE,
   bond_color = "black",
-  atom_circle_color = "white",
-  H_offset = c(0.35, 0.55),
-  label_fontface = "plain"
+  atom_circle_color = "transparent",
+  H_offset = NULL,
+  label_fontface = "plain",
+  normalize = TRUE,
+  target_bond_length = 1
 )
 }
 \arguments{
-\item{sdf_file}{String. Path to a SDF file containing the chemical structure.}
+\item{sdf_file}{Character. Path to an SDF file, or the file contents as
+a character vector of lines.}
 
-\item{title}{String. Optional title for the plot.}
+\item{use_sdf_stereo}{Logical. If \code{TRUE} (default), V2000 bond stereo
+codes are mapped to wedge (\code{stereo = 1}) and hashed
+(\code{stereo = 6}) bonds. If \code{FALSE}, all bonds are drawn as
+plain lines.}
 
-\item{collapse_hydrogens}{Logical. Whether to collapse hydrogens attached to
-heteroatoms (O, N, S, etc.) into labels like OH, NH2, SH.
-Default is \code{FALSE} (shows explicit hydrogens). This option needs
-to be specified before \code{ggchemplo2}.}
+\item{title}{Character. Optional plot title.}
 
-\item{rotation}{Numeric. Rotation angle in degrees (counterclockwise). This option needs to be specified before \code{ggchemplo2}.}
+\item{collapse_hydrogens}{Logical. If \code{TRUE}, hydrogens attached to
+heteroatoms are removed and drawn as collapsed labels (\code{OH},
+\code{NH2}, \code{SH}). Must be set here; it cannot be changed later
+in \code{ggchemplot2()}. Default \code{FALSE}.}
 
-\item{label_padding}{Numeric. Amount of padding around the molecule to prevent
-labels from being cut off. Higher values add more white space.
-Default is 0.6.}
+\item{rotation}{Numeric. Rotation in degrees, counterclockwise. Applied
+before flipping. Must be set here, not in \code{ggchemplot2()}.
+Default \code{0}.}
 
-\item{show_atom_circles}{Logical. Whether to draw circles around atoms.}
+\item{flip_horizontal}{Logical. If \code{TRUE}, reflect the structure
+through a vertical axis (\code{x -> -x}). A single-axis flip inverts
+wedge and hashed bonds so that the absolute configuration is kept.
+Flipping both axes is a 180 degrees in-plane rotation and does not invert
+stereo. Default \code{FALSE}.}
 
-\item{hide_carbon_circles}{Logical. Whether to hide circles around carbon atoms. Useful for showing organic compounds.}
+\item{flip_vertical}{Logical. If \code{TRUE}, reflect the structure
+through a horizontal axis (\code{y -> -y}). See
+\code{flip_horizontal}. Default \code{FALSE}.}
 
-\item{circle_stroke}{Numeric. Thickness of the atom circle border.}
+\item{label_padding}{Numeric. Extra data-unit margin around the molecule
+so labels are not clipped. Default \code{0.6} when \code{NULL} is
+resolved in \code{ggchemplot2()}.}
 
-\item{show_atom_labels}{Logical. Whether to show atom labels.}
+\item{show_atom_circles}{Logical. Draw filled discs behind atom labels.
+Default \code{TRUE}.}
 
-\item{hide_carbon_labels}{Logical. Whether to hide labels for carbon atoms.}
+\item{hide_carbon_circles}{Logical. If \code{TRUE}, carbon discs are
+omitted (skeletal drawing). Carbons that carry a charge or a radical
+are still labelled. Default \code{TRUE}.}
 
-\item{bond_width}{Numeric. Thickness of the bonds.}
+\item{circle_stroke}{Numeric. Border width of atom discs. Default \code{0}.}
 
-\item{atom_size}{Numeric. Size of the atom circles.}
+\item{show_atom_labels}{Logical. Draw element symbols. Default \code{TRUE}.}
 
-\item{label_size}{Numeric. Size of the atom labels.}
+\item{hide_carbon_labels}{Logical. If \code{TRUE}, carbon symbols are
+omitted unless the atom has a charge or a radical. Default \code{TRUE}.}
 
-\item{double_bond_offset}{Numeric. Offset distance for drawing double and triple bonds.}
+\item{bond_width}{Numeric. Bond line width in mm. If \code{NULL}, derived
+from \code{label_size}.}
 
-\item{custom_atom_colors}{Named character vector. Custom colors for specific atoms
-(e.g. \code{c("N" = "black", "O" = "red")}).}
+\item{atom_size}{Numeric. Atom disc size in mm. If \code{NULL}, derived
+from \code{label_size}.}
 
-\item{paint_it_black}{Logical. If \code{TRUE}, overrides colors to make all atoms black.}
+\item{label_size}{Numeric. Atom label size in points. If \code{NULL},
+\code{12} is used in \code{ggchemplot2()}.}
 
-\item{bond_color}{String. Specify the color of bonds. Default to black.}
+\item{double_bond_offset}{Numeric. Perpendicular offset of the second
+(and third) stroke of a multiple bond, in data units. If \code{NULL},
+\code{0.15} is used.}
 
-\item{atom_circle_color}{String. Specify the color of the atom circle. Default to white.}
+\item{custom_atom_colors}{Named character vector of colours, e.g.
+\code{c("N" = "black", "O" = "red")}. Unlisted elements keep the
+default palette.}
 
-\item{H_offset}{Numeric vector of length 2. Controls the distance of collapsed
-hydrogen labels (first value for single H, second for H2/H3).
-Only used when \code{collapse_hydrogens = TRUE}.}
+\item{paint_it_black}{Logical. If \code{TRUE}, every atom is drawn black.
+Default \code{FALSE}.}
 
-\item{label_fontface}{String. Font face for atom labels.
-Possible values are \code{"plain"} (default), \code{"bold"}, \code{"italic"}, or \code{"bold.italic"}.
-Controls the appearance of all atom labels (including collapsed hydrogens).}
+\item{bond_color}{Character. Colour of bonds. Default \code{"black"}.}
+
+\item{atom_circle_color}{Character. Fill of atom discs. Default
+\code{"transparent"}.}
+
+\item{H_offset}{Numeric vector of length 2 giving the data-unit gap from
+the heteroatom to a collapsed \code{H} (first value) or \code{H2}/\code{H3}
+(second value). Used only when \code{collapse_hydrogens = TRUE}. If
+\code{NULL}, \code{ggchemplot2()} computes a gap from
+\code{label_size} and \code{target_bond_length}.}
+
+\item{label_fontface}{Character. One of \code{"plain"}, \code{"bold"},
+\code{"italic"}, \code{"bold.italic"}. Default \code{"plain"}.}
+
+\item{normalize}{Logical. If \code{TRUE}, scale coordinates so the median
+bond length equals \code{target_bond_length}. Default \code{TRUE}.}
+
+\item{target_bond_length}{Numeric. Target median bond length in data units
+when \code{normalize = TRUE}. Default \code{1}.}
 }
 \value{
 A list containing the processed data and a ggplot object (\code{$plot}).
 }
 \description{
-This function parses a Structure Data File (SDF) and creates a list of data objects
-specifying atom connectivity together with parameters for plotting and customization.
+Parses a Structure Data File (SDF, V2000) and returns a list of atom and
+bond tables plus a ggplot object. Coordinates can be rotated, flipped,
+and normalized. Stereochemical bonds, charges and radicals in the file
+are read when present. Hydrogens on heteroatoms can be collapsed into
+\code{OH} / \code{NH2} / \code{SH} labels.
 }

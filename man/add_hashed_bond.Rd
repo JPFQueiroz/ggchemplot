@@ -24,7 +24,7 @@ add_hashed_bond(
 
 \item{shorten}{Numeric vector of length 2. Shortens the start and end of the bond to avoid superposition with the atom layer. Default to c(0.15, 0.22).}
 
-\item{colour}{String. Specifies the bond color. Default to "black".}
+\item{colour}{Character. Specifies the bond color. Default to "black".}
 
 \item{width}{Numeric. Specifies the bond width. Default to 0.28.}
 

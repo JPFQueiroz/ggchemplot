@@ -12,7 +12,7 @@
 #' @param frequency Numeric. Frequency of the wave. Default to 4.
 #' @param segments Numeric. Increase to make the wave smoothie. Default to 80.
 #' @param linewidth Numeric. Width of the wave line. Default to 1.35.
-#' @param label String. Optional. Add a label to the wave. Useful for protein names. Default to NULL.
+#' @param label Character. Optional. Add a label to the wave. Useful for protein names. Default to NULL.
 #'
 #' @return A list as in \code{ggchemplot1}.
 #'
