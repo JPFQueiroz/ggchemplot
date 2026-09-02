@@ -1,4 +1,8 @@
-# ggchemplot 0.3.0 (September 9, 2026)
+# ggchemplot 0.3.1 (September 2, 2026)
+
+* Added `show_atom_label()` to selectively restore explicit atom labels.  
+
+# ggchemplot 0.3.0 (September 1, 2026)
 
 * Improved logic for geometrical placement of collapsed hydrogen labels.
 * Added options to flip structures horizontally and vertically in `ggchemplot1()`.

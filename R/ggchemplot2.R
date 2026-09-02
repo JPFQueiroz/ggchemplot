@@ -143,6 +143,11 @@ ggchemplot2 <- function(result,
   atoms <- result$atoms
   bond_coords <- result$bond_coords
 
+  if (!"charge"     %in% names(atoms)) atoms$charge     <- 0L
+  if (!"radical"    %in% names(atoms)) atoms$radical    <- 0L
+  if (!"show_label" %in% names(atoms)) atoms$show_label <- FALSE
+  atoms$show_label[is.na(atoms$show_label)] <- FALSE
+
   # ====================== ATOM-DISK CLEARANCE ======================
   atom_size_ref  <- 12 * 0.353 * 1.4
   clearance_ref  <- 0.22
@@ -152,10 +157,14 @@ ggchemplot2 <- function(result,
     mutate(
       is_carbon = .data$symbol == "C",
       has_charge_or_rad = .data$charge != 0 | .data$radical != 0,
+      force_label = isTRUE(.data$show_label) | .data$show_label %in% TRUE,
       needs_clearance =
-        (isTRUE(show_atom_circles) & !(isTRUE(hide_carbon_circles) & .data$is_carbon)) |
-        (isTRUE(show_atom_labels)  & (!(isTRUE(hide_carbon_labels) & .data$is_carbon) |
-                                        .data$has_charge_or_rad))
+        (isTRUE(show_atom_circles) &
+           (!(isTRUE(hide_carbon_circles) & .data$is_carbon) | .data$force_label)) |
+        (isTRUE(show_atom_labels) &
+           (!(isTRUE(hide_carbon_labels) & .data$is_carbon) |
+              .data$has_charge_or_rad |
+              .data$force_label))
     ) %>%
     select(.data$atom_id, .data$needs_clearance)
 
@@ -344,12 +353,15 @@ ggchemplot2 <- function(result,
   }
 
   # Atom circles
-  atoms_circle <- if (hide_carbon_circles) atoms %>%
-    filter(.data$symbol != "C") else atoms
+  atoms_circle <- atoms
+  if (hide_carbon_circles) {
+    atoms_circle <- atoms %>%
+      filter(.data$symbol != "C" | .data$show_label)
+  }
   if (show_atom_circles && nrow(atoms_circle) > 0) {
     p <- p + geom_point(data = atoms_circle,
                         aes(x = .data$x, y = .data$y),
-                        color = atoms_circle$color,
+                        color = if (circle_stroke <= 0) NA else atoms_circle$color,
                         fill = atom_circle_color,
                         size = atom_size,
                         shape = 21,
@@ -362,12 +374,15 @@ ggchemplot2 <- function(result,
     if (!"radical" %in% names(atoms)) atoms$radical <- 0L
 
     atoms_label <- atoms
+
     if (hide_carbon_labels) {
-      # still show C if it has a charge or a radical
       atoms_label <- atoms_label %>%
-        filter(.data$symbol != "C" |
-                 .data$charge != 0 |
-                 .data$radical != 0)
+        filter(
+          .data$symbol != "C" |
+            .data$charge != 0 |
+            .data$radical != 0 |
+            .data$show_label
+        )
     }
 
     atoms_label <- atoms_label %>%

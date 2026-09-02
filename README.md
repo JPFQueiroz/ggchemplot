@@ -50,14 +50,27 @@ visualization.
 
 # Load ggchemplot
 library(ggchemplot)
+library(ggplot2)
+library(dplyr)
 
 # Path to the example file
-file_path <- system.file("extdata", "inst/extdata/P2_pyridone.sdf", 
+file_path <- system.file("extdata", "SAM.sdf", 
                          package = "ggchemplot")
 
 # Parse SDF file and generate the initial data object
-p1 <- ggchemplot1(sdf_file = file_path)
+p1 <- ggchemplot1(sdf_file = file_path, 
+                  collapse_hydrogens = TRUE,
+                  paint_it_black = TRUE, 
+                  atom_size = 6, 
+                  label_size = 14,
+                  normalize = TRUE,
+                  target_bond_length = 1.5
+                  )
 
-# Plot
-p1$plot
+# Plot the structure
+p1 %>% 
+  ggchemplot2() + 
+  labs(title = expression(italic(S)*"-adenosyl-"*scriptstyle(L)*"-methionine"))
 ```
+
+<img src="man/figures/ggchemplot_logo.pngexample-1.png" width="100%" />

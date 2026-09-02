@@ -50,20 +50,31 @@ remotes::install_github("JPFQueiroz/ggchemplot")
 
 The quick example below shows how to parse a SDF file and save a default visualization.  
 
-```{r example, eval=FALSE, fig.height=6, fig.width=6, message=FALSE, warning=FALSE, dpi=300, include=TRUE}
+```{r example, echo=TRUE, fig.height=6, fig.width=6, message=FALSE, warning=FALSE, dpi=300}
 
 # Load ggchemplot
 library(ggchemplot)
+library(ggplot2)
+library(dplyr)
 
 # Path to the example file
-file_path <- system.file("extdata", "inst/extdata/P2_pyridone.sdf", 
+file_path <- system.file("extdata", "SAM.sdf", 
                          package = "ggchemplot")
 
 # Parse SDF file and generate the initial data object
-p1 <- ggchemplot1(sdf_file = file_path)
+p1 <- ggchemplot1(sdf_file = file_path, 
+                  collapse_hydrogens = TRUE,
+                  paint_it_black = TRUE, 
+                  atom_size = 6, 
+                  label_size = 14,
+                  normalize = TRUE,
+                  target_bond_length = 1.5
+                  )
 
-# Plot
-p1$plot
+# Plot the structure
+p1 %>% 
+  ggchemplot2() + 
+  labs(title = expression(italic(S)*"-adenosyl-"*scriptstyle(L)*"-methionine"))
 
 ```
 
