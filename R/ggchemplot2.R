@@ -283,6 +283,10 @@ ggchemplot2 <- function(result,
   }
 
   # ====================== MULTIPLE BONDS ======================
+  if (!"mb_side" %in% names(bond_coords)) {
+    bond_coords$mb_side <- NA_integer_
+  }
+
   multi_bonds <- bond_coords %>% filter(.data$order > 1)
 
   if (nrow(multi_bonds) > 0) {
@@ -315,12 +319,15 @@ ggchemplot2 <- function(result,
         px  = -.data$uy,
         py  =  .data$ux,
 
-        side = .mb_choose_double_bond_side(
+        side_auto = .mb_choose_double_bond_side(
           from  = .data$from,
           to    = .data$to,
           bonds = bond_coords,
           atoms = atoms
         ),
+        side = ifelse(.data$order == 2 & !is.na(.data$mb_side),
+                      .data$mb_side,
+                      .data$side_auto),
 
         off_x = .data$px * offset_dist * .data$side,
         off_y = .data$py * offset_dist * .data$side,
@@ -554,6 +561,33 @@ ggchemplot2 <- function(result,
         )
       }
     }
+  }
+
+  if (!is.null(result$atom_notes) && nrow(result$atom_notes) > 0) {
+    notes <- result$atom_notes %>%
+      left_join(
+        atoms %>% select(.data$atom_id, ax = .data$x, ay = .data$y),
+        by = "atom_id"
+      ) %>%
+      mutate(
+        rad = .data$direction * pi / 180,
+        nx  = .data$ax + .data$distance * cos(.data$rad),
+        ny  = .data$ay + .data$distance * sin(.data$rad)
+      )
+
+    p <- p + geom_text(
+      data = notes,
+      aes(x = .data$nx, y = .data$ny,
+          label = .data$label, angle = .data$angle),
+      parse = FALSE,
+      vjust = 0.5,
+      hjust = 0.5,
+      size = label_size * 0.65,
+      size.unit = "pt",
+      family = label_family,
+      fontface = label_fontface,
+      color = "black"
+    )
   }
 
   if (show_ids) {

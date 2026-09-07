@@ -1,3 +1,8 @@
+# ggchemplot 0.3.3 (September 7, 2026)
+
+* Added `show_atom_note()` to selectively set a label nearby an atom.  
+* Added `flip_double_bond_side()` to flip a double bond between a pair of specified atoms.  
+
 # ggchemplot 0.3.2 (September 7, 2026)
 
 * Added `place_collapsed_h()` to selectively set the placement of collapsed H atom labels.  
