@@ -7,5 +7,6 @@ show_atom_label <- function(result, atom_id) {
     result$atoms$show_label <- FALSE
   }
   result$atoms$show_label[result$atoms$atom_id %in% atom_id] <- TRUE
+  result$plot <- ggchemplot2(result)
   result
 }

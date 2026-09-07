@@ -73,5 +73,6 @@ uncollapse_hydrogens <- function(result, atom_id) {
     result <- rebuild_bond_coords(result)
   }
 
+  result$plot <- ggchemplot2(result)
   result
 }
