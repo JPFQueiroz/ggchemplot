@@ -450,12 +450,18 @@ ggchemplot2 <- function(result,
           horiz = c(TRUE, TRUE, FALSE, FALSE),
           stringsAsFactors = FALSE
         )
-        cands$score <- vapply(seq_len(nrow(cands)), function(j) {
-          clash(cands$hx[j], cands$hy[j], row$parent_id, others)
-        }, numeric(1))
-        cands$score <- cands$score + ifelse(cands$horiz, 0, 8)
 
-        best <- cands[which.min(cands$score), ]
+        forced <- if ("side_force" %in% names(h_labels)) row$side_force else NA_character_
+
+        if (!is.na(forced) && nzchar(forced)) {
+          best <- cands[cands$side == forced, ]
+        } else {
+          cands$score <- vapply(seq_len(nrow(cands)), function(j) {
+            clash(cands$hx[j], cands$hy[j], row$parent_id, others)
+          }, numeric(1))
+          cands$score <- cands$score + ifelse(cands$horiz, 0, 1.5)
+          best <- cands[which.min(cands$score), ]
+        }
 
         dist_left  <- if (row$nH == 1) base else base * 1.12
         dist_right <- if (row$nH == 1) base else base * 0.82

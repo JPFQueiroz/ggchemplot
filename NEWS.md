@@ -1,3 +1,7 @@
+# ggchemplot 0.3.2 (September 7, 2026)
+
+* Added `place_collapsed_h()` to selectively set the placement of collapsed H atom labels.  
+
 # ggchemplot 0.3.1 (September 2, 2026)
 
 * Added `show_atom_label()` to selectively restore explicit atom labels.  
