@@ -45,11 +45,11 @@
 #'   \code{"sans"}, \code{"serif"}, and \code{"mono"}.
 #' @param label_padding Numeric. Extra data-unit margin so labels are
 #'   not clipped. Default \code{0.6}.
-#' @param H_offset Numeric vector of length 2: data-unit gap from the
-#'   heteroatom to a collapsed \code{H} (first) or \code{H2}/\code{H3}
-#'   (second). Used only when \code{collapse_hydrogens = TRUE} was set
-#'   in \code{\link{ggchemplot1}}. If \code{NULL}, a gap is computed
-#'   from \code{label_size} and \code{target_bond_length}.
+#' @param H_offset Numeric. Collapsed-hydrogen gap in data units.
+#'   Length 1: same horizontal gap for H and H2; vertical = 1.15 times that.
+#'   Length 2: horizontal for H, horizontal for H2; vertical defaults to 1.15 times each.
+#'   Length 4: horizontal H, horizontal H2, vertical H, vertical H2.
+#'   If \code{NULL}, all four are computed from \code{label_size}.
 #' @param bond_width Numeric. Bond width in mm. If \code{NULL},
 #'   \code{label_size * 0.353 * 0.1}.
 #' @param bond_color Character. Colour of bonds. Default \code{"black"}.
@@ -130,7 +130,24 @@ ggchemplot2 <- function(result,
   paint_it_black      <- if (!is.null(paint_it_black)) paint_it_black else pms$paint_it_black %||% FALSE
   bond_color          <- if (!is.null(bond_color)) bond_color else pms$bond_color %||% "black"
   atom_circle_color   <- if (!is.null(atom_circle_color)) atom_circle_color else pms$atom_circle_color %||% "transparent"
-  H_offset            <- if (!is.null(H_offset)) H_offset else pms$H_offset %||% c(-0.01250 + 0.02969 * label_size, 0.06375 + 0.03000 * label_size)
+  H_offset <- if (!is.null(H_offset)) H_offset else pms$H_offset
+
+  if (is.null(H_offset)) {
+    h1 <- -0.01250 + 0.02969 * label_size * 1.05
+    h2 <-  0.06375 + 0.03000 * label_size * 1.05
+    v_scale <- 1.15
+    H_offset <- c(h1, h2, h1 * v_scale, h2 * v_scale)
+  } else if (length(H_offset) == 1L) {
+    H_offset <- c(H_offset, H_offset * 1.35, H_offset * 1.45, H_offset * 1.45 * 1.35)
+  } else if (length(H_offset) == 2L) {
+    H_offset <- c(H_offset[1], H_offset[2], H_offset[1] * 1.45, H_offset[2] * 1.45)
+  } else if (length(H_offset) == 3L) {
+    H_offset <- c(H_offset[1], H_offset[2], H_offset[3], H_offset[3])
+  } else if (length(H_offset) >= 4L) {
+    H_offset <- H_offset[1:4]
+  } else {
+    stop("H_offset must have 1, 2, 3 or 4 numbers.")
+  }
   label_fontface      <- if (!is.null(label_fontface)) label_fontface else pms$label_fontface %||% "plain"
   label_family        <- if (!is.null(label_family)) label_family else pms$label_family %||% "sans"
   normalize           <- if (!is.null(normalize)) normalize else pms$normalize %||% TRUE
@@ -427,8 +444,9 @@ ggchemplot2 <- function(result,
         select(oid = .data$atom_id, ox = .data$x, oy = .data$y)
 
       h_off_h  <- H_offset[1]
-      h_off_h2 <- if (length(H_offset) >= 2) H_offset[2] else H_offset[1] * 1.35
-      h_off_v  <- 0.28 * target_bond_length
+      h_off_h2 <- H_offset[2]
+      h_off_v1 <- H_offset[3]
+      h_off_v2 <- H_offset[4]
 
       # clash score: smaller = more crowded
       clash <- function(hx, hy, parent_id, others) {
@@ -441,12 +459,13 @@ ggchemplot2 <- function(result,
       placed <- vector("list", nrow(h_labels))
       for (i in seq_len(nrow(h_labels))) {
         row  <- h_labels[i, ]
-        base <- if (row$nH == 1) h_off_h else h_off_h2
+        base   <- if (row$nH == 1) h_off_h  else h_off_h2
+        base_v <- if (row$nH == 1) h_off_v1 else h_off_v2
 
         cands <- data.frame(
           side  = c("left", "right", "up", "down"),
           hx    = c(row$x - base, row$x + base, row$x, row$x),
-          hy    = c(row$y, row$y, row$y + h_off_v, row$y - h_off_v),
+          hy    = c(row$y, row$y, row$y + base_v, row$y - base_v),
           horiz = c(TRUE, TRUE, FALSE, FALSE),
           stringsAsFactors = FALSE
         )
@@ -459,8 +478,20 @@ ggchemplot2 <- function(result,
           cands$score <- vapply(seq_len(nrow(cands)), function(j) {
             clash(cands$hx[j], cands$hy[j], row$parent_id, others)
           }, numeric(1))
-          cands$score <- cands$score + ifelse(cands$horiz, 0, 1.5)
-          best <- cands[which.min(cands$score), ]
+
+          horiz <- cands[cands$horiz, ]
+          vert  <- cands[!cands$horiz, ]
+
+          # ignore the parent itself in "how crowded is this seat"
+          best_h <- horiz[which.min(horiz$score), ]
+          best_v <- vert[which.min(vert$score), ]
+
+          # use vertical only if both L/R are clearly worse
+          if (min(horiz$score) > 3 * min(vert$score) + 2) {
+            best <- best_v
+          } else {
+            best <- best_h
+          }
         }
 
         dist_left  <- if (row$nH == 1) base else base * 1.12

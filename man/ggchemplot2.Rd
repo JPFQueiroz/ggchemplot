@@ -70,11 +70,11 @@ hydrogen labels use this argument directly. Default \code{"plain"}.}
 \item{label_padding}{Numeric. Extra data-unit margin so labels are
 not clipped. Default \code{0.6}.}
 
-\item{H_offset}{Numeric vector of length 2: data-unit gap from the
-heteroatom to a collapsed \code{H} (first) or \code{H2}/\code{H3}
-(second). Used only when \code{collapse_hydrogens = TRUE} was set
-in \code{\link{ggchemplot1}}. If \code{NULL}, a gap is computed
-from \code{label_size} and \code{target_bond_length}.}
+\item{H_offset}{Numeric. Collapsed-hydrogen gap in data units.
+Length 1: same horizontal gap for H and H2; vertical = 1.15 times that.
+Length 2: horizontal for H, horizontal for H2; vertical defaults to 1.15 times each.
+Length 4: horizontal H, horizontal H2, vertical H, vertical H2.
+If \code{NULL}, all four are computed from \code{label_size}.}
 
 \item{bond_width}{Numeric. Bond width in mm. If \code{NULL},
 \code{label_size * 0.353 * 0.1}.}

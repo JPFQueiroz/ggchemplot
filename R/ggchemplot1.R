@@ -58,11 +58,11 @@
 #' @param bond_color Character. Colour of bonds. Default \code{"black"}.
 #' @param atom_circle_color Character. Fill of atom discs. Default
 #'   \code{"transparent"}.
-#' @param H_offset Numeric vector of length 2 giving the data-unit gap from
-#'   the heteroatom to a collapsed \code{H} (first value) or \code{H2}/\code{H3}
-#'   (second value). Used only when \code{collapse_hydrogens = TRUE}. If
-#'   \code{NULL}, \code{ggchemplot2()} computes a gap from
-#'   \code{label_size} and \code{target_bond_length}.
+#' @param H_offset Numeric. Collapsed-hydrogen gap in data units.
+#'   Length 1: same horizontal gap for H and H2; vertical = 1.15 times that.
+#'   Length 2: horizontal for H, horizontal for H2; vertical defaults to 1.15 times each.
+#'   Length 4: horizontal H, horizontal H2, vertical H, vertical H2.
+#'   If \code{NULL}, all four are computed from \code{label_size}.
 #' @param label_fontface Character. One of \code{"plain"}, \code{"bold"},
 #'   \code{"italic"}, \code{"bold.italic"}. Default \code{"plain"}.
 #' @param normalize Logical. If \code{TRUE}, scale coordinates so the median
