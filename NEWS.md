@@ -1,3 +1,7 @@
+# ggchemplot 0.3.4 (September 8, 2026)
+
+* Added color column to collapsed H labels data.  
+
 # ggchemplot 0.3.3 (September 7, 2026)
 
 * Added `show_atom_note()` to selectively set a label nearby an atom.  

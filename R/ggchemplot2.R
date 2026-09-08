@@ -516,6 +516,7 @@ ggchemplot2 <- function(result,
           h_text    = row$h_text,
           hx        = hx,
           hy        = hy,
+          color     = if ("color" %in% names(row)) row$color else "black",
           stringsAsFactors = FALSE
         )
       }
@@ -535,29 +536,28 @@ ggchemplot2 <- function(result,
 
       p <- p + geom_text(
         data = h_H,
-        aes(x = .data$hx, y = .data$hy, label = "H"),
+        aes(x = .data$hx, y = .data$hy, label = "H", color = .data$color),
         parse = FALSE,
         vjust = 0.5,
         hjust = 0.5,
         size = label_size,
         size.unit = "pt",
         family = label_family,
-        fontface = label_fontface,
-        color = "black"
-      )
+        fontface = label_fontface
+      ) +
+        scale_color_identity()
 
       if (nrow(h_num) > 0) {
         p <- p + geom_text(
           data = h_num,
-          aes(x = .data$hx, y = .data$hy, label = .data$lab),
+          aes(x = .data$hx, y = .data$hy, label = .data$lab, color = .data$color),
           parse = FALSE,
           vjust = 1,
           hjust = 0,
           size = label_size * 0.65,
           size.unit = "pt",
           family = label_family,
-          fontface = label_fontface,
-          color = "black"
+          fontface = label_fontface
         )
       }
     }

@@ -28,13 +28,16 @@ collapse_hydrogens_func <- function(res) {
 
   # Separate H labels
   h_labels <- h_counts %>%
-    left_join(atoms %>% select(.data$atom_id, .data$x, .data$y),
-              by = c("parent_id" = "atom_id")) %>%
+    left_join(
+      atoms %>% select(.data$atom_id, .data$x, .data$y, .data$color),
+      by = c("parent_id" = "atom_id")
+    ) %>%
     mutate(
       h_text = case_when(
         nH == 1 ~ "H",
-        TRUE ~ paste0("H[", nH, "]")
-      )
+        TRUE    ~ paste0("H[", nH, "]")
+      ),
+      color = ifelse(is.na(.data$color), "black", .data$color)
     )
 
   res$atoms <- heavy_atoms
