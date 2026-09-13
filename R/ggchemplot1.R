@@ -57,7 +57,7 @@
 #'   Default \code{FALSE}.
 #' @param bond_color Character. Colour of bonds. Default \code{"black"}.
 #' @param atom_circle_color Character. Fill of atom discs. Default
-#'   \code{"transparent"}.
+#'   \code{"transparent"}. If \code{"atom"}, fill atom discs with atom colors.
 #' @param H_offset Numeric. Collapsed-hydrogen gap in data units.
 #'   Length 1: same horizontal gap for H and H2; vertical = 1.15 times that.
 #'   Length 2: horizontal for H, horizontal for H2; vertical defaults to 1.15 times each.
@@ -326,6 +326,7 @@ ggchemplot1 <- function(sdf_file,
     label_size = label_size,
     double_bond_offset = double_bond_offset,
     custom_atom_colors = custom_atom_colors,
+    atom_circle_color = atom_circle_color,
     paint_it_black = paint_it_black,
     H_offset = H_offset,
     label_fontface = label_fontface,

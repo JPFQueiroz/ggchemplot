@@ -129,7 +129,7 @@ ggchemplot2 <- function(result,
   double_bond_offset  <- if (!is.null(double_bond_offset)) double_bond_offset else pms$double_bond_offset %||% 0.15
   paint_it_black      <- if (!is.null(paint_it_black)) paint_it_black else pms$paint_it_black %||% FALSE
   bond_color          <- if (!is.null(bond_color)) bond_color else pms$bond_color %||% "black"
-  atom_circle_color   <- if (!is.null(atom_circle_color)) atom_circle_color else pms$atom_circle_color %||% "transparent"
+  atom_circle_color   <- if (!is.null(atom_circle_color)) atom_circle_color else pms$atom_circle_color
   H_offset <- if (!is.null(H_offset)) H_offset else pms$H_offset
 
   if (is.null(H_offset)) {
@@ -382,11 +382,16 @@ ggchemplot2 <- function(result,
     atoms_circle <- atoms %>%
       filter(.data$symbol != "C" | .data$show_label)
   }
+  fill_col <- if (identical(atom_circle_color, "atom")) {
+    atoms_circle$color
+  } else {
+    atom_circle_color
+  }
   if (show_atom_circles && nrow(atoms_circle) > 0) {
     p <- p + geom_point(data = atoms_circle,
                         aes(x = .data$x, y = .data$y),
                         color = if (circle_stroke <= 0) NA else atoms_circle$color,
-                        fill = atom_circle_color,
+                        fill = fill_col,
                         size = atom_size,
                         shape = 21,
                         stroke = circle_stroke)

@@ -103,7 +103,7 @@ Default \code{FALSE}.}
 \item{bond_color}{Character. Colour of bonds. Default \code{"black"}.}
 
 \item{atom_circle_color}{Character. Fill of atom discs. Default
-\code{"transparent"}.}
+\code{"transparent"}. If \code{"atom"}, fill atom discs with atom colors.}
 
 \item{H_offset}{Numeric. Collapsed-hydrogen gap in data units.
 Length 1: same horizontal gap for H and H2; vertical = 1.15 times that.
