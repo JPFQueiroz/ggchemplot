@@ -1,3 +1,7 @@
+# ggchemplot 0.3.6 (September 15, 2026)
+
+* Added `highlight_atoms()` to selectively highlight atoms.  
+
 # ggchemplot 0.3.4 (September 8, 2026)
 
 * Added color column to collapsed H labels data.  

@@ -620,6 +620,37 @@ ggchemplot2 <- function(result,
     }
   }
 
+  # Highlight atoms
+  if (!is.null(result$highlights) && is.data.frame(result$highlights) &&
+      nrow(result$highlights) > 0) {
+
+    hl <- merge(
+      result$highlights,
+      atoms[, c("atom_id", "x", "y")],
+      by = "atom_id",
+      all.x = TRUE
+    )
+    hl <- hl[is.finite(hl$x) & is.finite(hl$y), , drop = FALSE]
+
+    if (nrow(hl) > 0) {
+      ring <- ifelse(!is.na(hl$stroke) & hl$stroke > 0,
+                     hl$colour,
+                     "transparent")   # not NA
+
+      p <- p + geom_point(
+        data = hl,
+        aes(x = .data$x, y = .data$y),
+        inherit.aes = FALSE,
+        shape  = 21,
+        size   = hl$size,
+        stroke = hl$stroke,
+        fill   = hl$fill,
+        colour = ring,
+        alpha  = hl$alpha
+      )
+    }
+  }
+
   p <- p +
     coord_fixed(ratio = 1, clip = "off") +
     theme_void() +
