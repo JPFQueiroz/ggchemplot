@@ -5,10 +5,15 @@
 #' bond tables plus a ggplot object. Coordinates can be rotated, flipped,
 #' and normalized. Stereochemical bonds, charges and radicals in the file
 #' are read when present. Hydrogens on heteroatoms can be collapsed into
-#' \code{OH} / \code{NH2} / \code{SH} labels.
+#' \code{OH} / \code{NH2} / \code{SH} labels. A PubChem compound can be
+#' loaded directly with \code{pubchem_cid}; the 2D SDF is downloaded and
+#' parsed in place of \code{sdf_file}.
 #'
 #' @param sdf_file Character. Path to an SDF file, or the file contents as
-#'   a character vector of lines.
+#'   a character vector of lines. Required unless \code{pubchem_cid} is set.
+#' @param pubchem_cid Integer. PubChem compound ID. If given, the 2D SDF is
+#'   downloaded from PubChem and \code{sdf_file} is ignored. Requires an
+#'   internet connection. Default \code{NULL}.
 #' @param use_sdf_stereo Logical. If \code{TRUE} (default), V2000 bond stereo
 #'   codes are mapped to wedge (\code{stereo = 1}) and hashed
 #'   (\code{stereo = 6}) bonds. If \code{FALSE}, all bonds are drawn as
@@ -78,7 +83,8 @@
 #' @importFrom stats setNames
 #'
 #' @export
-ggchemplot1 <- function(sdf_file,
+ggchemplot1 <- function(sdf_file = NULL,
+                        pubchem_cid = NULL,
                         use_sdf_stereo = TRUE,
                         title = NULL,
                         collapse_hydrogens = FALSE,
@@ -104,16 +110,50 @@ ggchemplot1 <- function(sdf_file,
                         normalize = TRUE,
                         target_bond_length = 1.0) {
 
+  # PubChem CID replaces the local file
+  if (!is.null(pubchem_cid)) {
+    pubchem_cid <- suppressWarnings(as.integer(pubchem_cid))
+    if (length(pubchem_cid) != 1L || is.na(pubchem_cid)) {
+      stop("pubchem_cid must be a single PubChem compound ID.")
+    }
+    dest <- tempfile(fileext = ".sdf")
+    url <- sprintf(
+      "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/%d/SDF?record_type=2d",
+      pubchem_cid
+    )
+    status <- tryCatch(
+      utils::download.file(url, dest, mode = "wb", quiet = TRUE),
+      error = function(e) e
+    )
+    if (inherits(status, "error") || !identical(status, 0L) || !file.exists(dest)) {
+      stop("Could not download PubChem CID ", pubchem_cid, ".")
+    }
+    sdf_file <- dest
+  }
+
+  if (is.null(sdf_file)) stop("Provide sdf_file or pubchem_cid.")
+
   # Read SDF
   lines <-
-    if (file.exists(sdf_file)) readLines(sdf_file, warn = FALSE) else
+    if (is.character(sdf_file) && length(sdf_file) == 1L && file.exists(sdf_file)) {
+      readLines(sdf_file, warn = FALSE)
+    } else {
       sdf_file
-  counts_line <- grep("^\\s*\\d+\\s+\\d+", lines)[1]
+    }
+  counts_line <- grep("V2000", lines)[1]
+  if (is.na(counts_line)) counts_line <- grep("^\\s*\\d+\\s+\\d+", lines)[1]
   if (is.na(counts_line)) stop("Invalid SDF format")
 
-  counts <- strsplit(trimws(lines[counts_line]), "\\s+")[[1]]
-  n_atoms <- as.integer(counts[1])
-  n_bonds <- as.integer(counts[2])
+  counts_text <- lines[counts_line]
+  if (grepl("^\\d{6}", counts_text)) {
+    n_atoms <- as.integer(substr(counts_text, 1, 3))
+    n_bonds <- as.integer(substr(counts_text, 4, 6))
+  } else {
+    counts <- strsplit(trimws(counts_text), "\\s+")[[1]]
+    n_atoms <- as.integer(counts[1])
+    n_bonds <- as.integer(counts[2])
+  }
+  if (is.na(n_atoms) || is.na(n_bonds)) stop("Invalid SDF format")
 
   # Atoms
   atom_start <- counts_line + 1
@@ -302,7 +342,7 @@ ggchemplot1 <- function(sdf_file,
                  bond_coords = bond_coords,
                  original_atoms = atoms,
                  original_bond_coords = bond_coords
-                 )
+  )
 
   if (collapse_hydrogens) {
     result <- collapse_hydrogens_func(result)
@@ -331,7 +371,8 @@ ggchemplot1 <- function(sdf_file,
     H_offset = H_offset,
     label_fontface = label_fontface,
     target_bond_length = target_bond_length,
-    normalize = normalize
+    normalize = normalize,
+    pubchem_cid = pubchem_cid
   )
 
   # Final plot using ggchemplot2

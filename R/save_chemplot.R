@@ -39,32 +39,25 @@ save_chemplot <- function(result,
     plot <- result$plot
   }
 
-  atoms <- result$atoms
-  bonds <- result$bond_coords
+  atoms <- result$original_atoms %||% result$atoms
+  bonds <- result$original_bond_coords %||% result$bond_coords
 
-  # ----- median bond length in data units -----
   if (!is.null(bonds) && nrow(bonds) > 0) {
-    bond_lengths <- sqrt(
-      (bonds$x2 - bonds$x1)^2 +
-        (bonds$y2 - bonds$y1)^2
-    )
-
-    bond_lengths <- bond_lengths[is.finite(bond_lengths) & bond_lengths > 0]
+    s1 <- atoms$symbol[match(bonds$from, atoms$atom_id)]
+    s2 <- atoms$symbol[match(bonds$to, atoms$atom_id)]
+    has_h <- s1 == "H" | s2 == "H"
+    bond_lengths <- sqrt((bonds$x2 - bonds$x1)^2 + (bonds$y2 - bonds$y1)^2)
+    bond_lengths <- bond_lengths[is.finite(bond_lengths) & bond_lengths > 0 & !has_h]
 
     if (length(bond_lengths) > 0) {
       med <- median(bond_lengths)
       mad_val <- mad(bond_lengths, center = med, constant = 1)
-
-      # Keep bonds within 3 MAD of the median
       if (mad_val > 0) {
-        typical_bonds <- bond_lengths[
-          abs(bond_lengths - med) <= 3 * mad_val
-        ]
+        typical_bonds <- bond_lengths[abs(bond_lengths - med) <= 3 * mad_val]
       } else {
         typical_bonds <- bond_lengths
       }
-
-      median_bond <- median(typical_bonds)
+      median_bond <- if (length(typical_bonds)) median(typical_bonds) else med
     } else {
       median_bond <- 1.0
     }

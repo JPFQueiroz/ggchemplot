@@ -1,3 +1,11 @@
+# ggchemplot 0.4.0 (October 10, 2026)
+
+* Added `check_valence()` for diagnostics of a ggchemplot object.  
+* Added `sketch_molecule()`, `add_group()` and `add_metal()` for sketching a ggchemplot object.  
+* Added option for parsing CID from PubChem instead of a local SDF file.  
+* Bug fix in `ggchemplot1()` parsing of SDF files.  
+* Median bond calculation in `save_chemplot()` now excludes any bond involving H atoms.  
+
 # ggchemplot 0.3.6 (September 15, 2026)
 
 * Added `highlight_atoms()` to selectively highlight atoms.  

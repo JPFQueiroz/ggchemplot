@@ -284,7 +284,7 @@ ggchemplot2 <- function(result,
 
   # ====================== MULTIPLE BONDS ======================
   if (!"mb_side" %in% names(bond_coords)) {
-    bond_coords$mb_side <- NA_integer_
+    bond_coords$mb_side <- rep(NA_integer_, nrow(bond_coords))
   }
 
   multi_bonds <- bond_coords %>% filter(.data$order > 1)
@@ -450,6 +450,11 @@ ggchemplot2 <- function(result,
 
     if (!is.null(result$h_labels) && nrow(result$h_labels) > 0) {
       h_labels <- result$h_labels
+      if (isTRUE(hide_carbon_labels)) {
+        parent_sym <- atoms$symbol[match(h_labels$parent_id, atoms$atom_id)]
+        h_labels <- h_labels[parent_sym != "C", , drop = FALSE]
+      }
+      if (nrow(h_labels) > 0) {
 
       others <- atoms %>%
         filter(.data$symbol != "H") %>%
@@ -466,6 +471,13 @@ ggchemplot2 <- function(result,
         d <- d[is.finite(d)]
         if (!length(d)) return(0)
         sum(1 / pmax(d, 0.08)^2)
+      }
+
+      h_color <- "gray40"
+      if (isTRUE(paint_it_black)) {
+        h_color <- "black"
+      } else if (!is.null(pms$custom_atom_colors) && "H" %in% names(pms$custom_atom_colors)) {
+        h_color <- unname(pms$custom_atom_colors[["H"]])
       }
 
       placed <- vector("list", nrow(h_labels))
@@ -521,7 +533,7 @@ ggchemplot2 <- function(result,
           h_text    = row$h_text,
           hx        = hx,
           hy        = hy,
-          color     = if ("color" %in% names(row)) row$color else "black",
+          color     = h_color,
           stringsAsFactors = FALSE
         )
       }
@@ -565,6 +577,7 @@ ggchemplot2 <- function(result,
           fontface = label_fontface
         )
       }
+    }
     }
   }
 

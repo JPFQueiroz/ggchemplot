@@ -5,7 +5,8 @@
 \title{Read a small compound data in SDF format and generate an initial plot}
 \usage{
 ggchemplot1(
-  sdf_file,
+  sdf_file = NULL,
+  pubchem_cid = NULL,
   use_sdf_stereo = TRUE,
   title = NULL,
   collapse_hydrogens = FALSE,
@@ -34,7 +35,11 @@ ggchemplot1(
 }
 \arguments{
 \item{sdf_file}{Character. Path to an SDF file, or the file contents as
-a character vector of lines.}
+a character vector of lines. Required unless \code{pubchem_cid} is set.}
+
+\item{pubchem_cid}{Integer. PubChem compound ID. If given, the 2D SDF is
+downloaded from PubChem and \code{sdf_file} is ignored. Requires an
+internet connection. Default \code{NULL}.}
 
 \item{use_sdf_stereo}{Logical. If \code{TRUE} (default), V2000 bond stereo
 codes are mapped to wedge (\code{stereo = 1}) and hashed
@@ -128,5 +133,7 @@ Parses a Structure Data File (SDF, V2000) and returns a list of atom and
 bond tables plus a ggplot object. Coordinates can be rotated, flipped,
 and normalized. Stereochemical bonds, charges and radicals in the file
 are read when present. Hydrogens on heteroatoms can be collapsed into
-\code{OH} / \code{NH2} / \code{SH} labels.
+\code{OH} / \code{NH2} / \code{SH} labels. A PubChem compound can be
+loaded directly with \code{pubchem_cid}; the 2D SDF is downloaded and
+parsed in place of \code{sdf_file}.
 }
