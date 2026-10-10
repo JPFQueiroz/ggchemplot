@@ -236,7 +236,7 @@ ggchemplot2 <- function(result,
         draw_len = pmax(0.05, .data$len - .data$s1 - .data$s2),
 
         # half-width at the FAR end, in data units
-        # ~0.13 when bond length ≈ 1  → much slimmer than 0.26
+        # ~0.13 when bond length ≈ 1  -> much slimmer than 0.26
         wedge_w = pmin(0.16, pmax(0.09, 0.13 * .data$draw_len / target_bond_length)),
 
         # at least 3 hashes; typically 4–8 on a normal bond

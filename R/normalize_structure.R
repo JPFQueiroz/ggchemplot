@@ -9,20 +9,16 @@ normalize_structure <- function(result, target_bond_length = target_bond_length)
     return(result)
   }
 
-  bond_coords <- result$bond_coords
+  atoms <- result$original_atoms %||% result$atoms
+  bond_coords <- result$original_bond_coords %||% result$bond_coords
 
-  if (is.null(bond_coords) || nrow(bond_coords) == 0) {
-    warning("Normalization skipped: No bonds found.")
-    return(result)
-  }
+  s1 <- atoms$symbol[match(bond_coords$from, atoms$atom_id)]
+  s2 <- atoms$symbol[match(bond_coords$to, atoms$atom_id)]
+  has_h <- s1 == "H" | s2 == "H"
+  lengths <- sqrt((bond_coords$x2 - bond_coords$x1)^2 + (bond_coords$y2 - bond_coords$y1)^2)
+  lengths <- lengths[is.finite(lengths) & lengths > 0 & !has_h]
 
-  # Calculate bond lengths
-  bond_coords <- bond_coords %>%
-    mutate(
-      length = sqrt((.data$x2 - .data$x1)^2 + (.data$y2 - .data$y1)^2)
-    )
-
-  median_length <- median(bond_coords$length, na.rm = TRUE)
+  median_length <- if (length(lengths)) median(lengths, na.rm = TRUE) else NA_real_
 
   if (is.na(median_length) || median_length < 1e-8) {
     warning("Normalization skipped: Invalid bond lengths.")
